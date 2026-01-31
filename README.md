@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Lost & Found Application
 
 A full-stack web application built with Laravel (backend) and React (frontend) for managing lost and found items.
@@ -197,3 +198,6 @@ npm test
 ## 📄 License
 
 This project is licensed under the MIT License.
+=======
+# Lost-Found
+>>>>>>> 445ef239851e76ecd5e242c12498654899c59930
