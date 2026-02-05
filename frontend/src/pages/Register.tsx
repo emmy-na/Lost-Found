@@ -24,7 +24,7 @@ const Register: React.FC = () => {
     setLoading(true);
 
     try {
-      await register(name, email, password);
+      await register(name, email, password, passwordConfirmation);
       navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.message || 'An error occurred during registration');

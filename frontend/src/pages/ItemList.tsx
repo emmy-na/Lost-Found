@@ -10,12 +10,22 @@ interface Item {
   location: string;
   status: 'pending' | 'claimed' | 'resolved';
   contact_info: string | null;
+  image_url: string | null;
   user: {
     id: number;
     name: string;
     email: string;
   };
   created_at: string;
+  verification_status: 'pending' | 'verified' | 'rejected';
+  verification_notes?: string;
+  verified_by?: number;
+  verified_at?: string;
+  verifier?: {
+    id: number;
+    name: string;
+    email: string;
+  };
 }
 
 const ItemList: React.FC = () => {
@@ -29,13 +39,14 @@ const ItemList: React.FC = () => {
 
   useEffect(() => {
     fetchItems();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
   const fetchItems = async () => {
     try {
       setLoading(true);
       const response = await itemService.getItems(filters);
-      setItems(response.data.data);
+      setItems(response.data.data || []);
     } catch (error) {
       console.error('Error fetching items:', error);
     } finally {
@@ -148,9 +159,28 @@ const ItemList: React.FC = () => {
                     }`}>
                       {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                     </span>
+                    <span className={`ml-2 px-2 py-1 rounded-full text-xs ${
+                      item.verification_status === 'pending' 
+                        ? 'bg-yellow-100 text-yellow-800' 
+                        : item.verification_status === 'verified'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                    }`}>
+                      {item.verification_status.charAt(0).toUpperCase() + item.verification_status.slice(1)}
+                    </span>
                   </div>
                   
                   <p className="text-gray-600 mb-2">{item.description}</p>
+                  
+                  {item.image_url && (
+                    <div className="mb-3">
+                      <img 
+                        src={item.image_url} 
+                        alt={item.title}
+                        className="max-h-40 max-w-full object-contain border rounded-md"
+                      />
+                    </div>
+                  )}
                   
                   <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                     <span>📍 {item.location}</span>

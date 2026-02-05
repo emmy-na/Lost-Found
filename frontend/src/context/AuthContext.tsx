@@ -12,7 +12,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, passwordConfirmation: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: () => boolean;
 }
@@ -26,11 +26,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     // Check if user is logged in on initial load
     const checkAuthStatus = async () => {
+      console.log('Checking authentication status...');
+      const token = localStorage.getItem('authToken');
+      console.log('Token found in localStorage:', token);
+      
+      if (!token) {
+        console.log('No token found, setting user to null');
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      
       try {
+        console.log('Attempting to fetch current user...');
         const userData = await authService.getCurrentUser();
+        console.log('User data received:', userData);
         setUser(userData.user);
       } catch (error) {
-        // User is not authenticated
+        console.log('Error fetching user data:', error);
+        // User is not authenticated or token is invalid
+        console.log('Clearing auth token and setting user to null');
+        localStorage.removeItem('authToken');
         setUser(null);
       } finally {
         setLoading(false);
@@ -41,12 +57,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await authService.login(email, password);
+    const response = await authService.login({ email, password });
     setUser(response.user);
   };
 
-  const register = async (name: string, email: string, password: string) => {
-    const response = await authService.register(name, email, password);
+  const register = async (name: string, email: string, password: string, passwordConfirmation: string) => {
+    const response = await authService.register({ name, email, password, password_confirmation: passwordConfirmation });
     setUser(response.user);
   };
 

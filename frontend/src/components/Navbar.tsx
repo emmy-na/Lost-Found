@@ -2,9 +2,13 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-const Navbar: React.FC = () => {
+const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  
+  console.log('Navbar render - isAuthenticated:', isAuthenticated());
+  console.log('Navbar render - user:', user);
 
   const handleLogout = () => {
     logout();
@@ -27,7 +31,10 @@ const Navbar: React.FC = () => {
                 <Link to="/my-items" className="hover:text-blue-200 transition">My Items</Link>
                 
                 {user?.role === 'admin' && (
-                  <Link to="/admin" className="hover:text-blue-200 transition">Admin Panel</Link>
+                  <>
+                    <Link to="/admin" className="hover:text-blue-200 transition">Admin Panel</Link>
+                    <Link to="/admin/verification" className="hover:text-blue-200 transition">Verify Items</Link>
+                  </>
                 )}
                 
                 <span className="mr-4">Hello, {user?.name}</span>
